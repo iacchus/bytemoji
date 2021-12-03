@@ -17,24 +17,29 @@ class Bytemoji:
 
         if number:
             self.number = number
-            self.encode()
+            self.encode(self.number)
 
         elif bytemoji:
-            self.bytemoji = bytemoji
-            decode()
+            self.bytemoji_hash = bytemoji
+            self.decode(self.bytemoji_hash)
 
         #else:
         #   set Bytemoji.number and run Bytemoji.encode() or
         #   set Bytemoji.bytemoji_hash and run Bytemoji.decode()
 
-    def encode(self):
+    def encode(self, number: int):
+        self.number = number
         self.bitmap = self._int_to_bits(self.number)
         self.list_of_bits = self.get_base_hashmoji(self.bitmap)
         self.bytemoji_list = self.get_bytemoji_list(self.list_of_bits)
         self.bytemoji_hash = "".join(self.bytemoji_list)
 
-    def decode(self):
-        pass
+    def decode(self, bytemoji_hash: str):
+        self.bytemoji_hash = bytemoji_hash
+        self.bytemoji_list = list(bytemoji_hash)
+        self.list_of_bits = self.decode_bytemoji(self.bytemoji_list)
+        self.bitmap = "".join(self.list_of_bits)
+        self.number = int(self.bitmap, base=2)
 
     def get_base_hashmoji(self, bitmap_str: str) -> list[str]:
         # maybe we should accept
@@ -66,12 +71,13 @@ class Bytemoji:
 
         # last item will be specially treated because of the leading zeroes
         last_item = list_of_indexes.pop()  # last item
-        last_item_bitmap = int_to_bits(last_item)
+        last_item_bitmap = self._int_to_bits(last_item)
 
         # fill all items (except the last one) with zeroes, till 11 bits for char
         # some bitmsps are like 001100 before convertion, which make them lose
         # the leading zeroes at conversion to int
-        list_of_bitmaps = [int_to_bits(item).zfill(11) for item in list_of_indexes]
+        list_of_bitmaps = [self._int_to_bits(item).zfill(11) for item in
+                           list_of_indexes]
 
         bitmap = "".join(list_of_bitmaps)
         padding_size = (len(bitmap) + len(last_item_bitmap)) % BITS
@@ -108,20 +114,26 @@ class Bytemoji:
 # encoding
 
 some_number = 786543392320949749
-bitmap = int_to_bits(some_number)
-list_of_indexes = get_base_hashmoji(bitmap)
-bytemoji_list = get_bytemoji_list(list_of_indexes)
-bytemoji_hash = "".join(bytemoji_list)
 
-print(bytemoji_hash)
+bytemoji = Bytemoji(number=some_number)
+print("Encoding:", bytemoji.bytemoji_hash)
+
+bytemoji = Bytemoji(bytemoji='🔂🧟🧑🦼🌛📻🥲')
+print("Decoding:", bytemoji.number)
+# bitmap = int_to_bits(some_number)
+# list_of_indexes = get_base_hashmoji(bitmap)
+# bytemoji_list = get_bytemoji_list(list_of_indexes)
+# bytemoji_hash = "".join(bytemoji_list)
+
+# print(bytemoji_hash)
 
 # decoding
 
 
-list_of_bitmaps = decode_bytemoji(bytemoji_list)
-
-print(list_of_bitmaps)
-
-a = "".join(list_of_bitmaps)
-print(a)
-print(int(a, base=2))
+# list_of_bitmaps = decode_bytemoji(bytemoji_list)
+#
+# print(list_of_bitmaps)
+#
+# a = "".join(list_of_bitmaps)
+# print(a)
+# print(int(a, base=2))
