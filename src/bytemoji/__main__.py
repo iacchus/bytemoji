@@ -12,14 +12,29 @@ with open("data-ordered-emoji.json") as json_file:
 
 
 class Bytemoji:
-    def __init__(self, number: int, bytemoji: str = None):  # later let's
-                                                            # change this to
-                                                            # bytes()
+    def __init__(self, number: int = None, bytemoji: str = None):
+        # later let's change this to bytes()
 
-        self.number = number
-        self.bitmap = self._int_to_bits(number)
+        if number:
+            self.number = number
+            self.encode()
+
+        elif bytemoji:
+            self.bytemoji = bytemoji
+            decode()
+
+        #else:
+        #   set Bytemoji.number and run Bytemoji.encode() or
+        #   set Bytemoji.bytemoji_hash and run Bytemoji.decode()
+
+    def encode(self):
+        self.bitmap = self._int_to_bits(self.number)
         self.list_of_bits = self.get_base_hashmoji(self.bitmap)
         self.bytemoji_list = self.get_bytemoji_list(self.list_of_bits)
+        self.bytemoji_hash = "".join(self.bytemoji_list)
+
+    def decode(self):
+        pass
 
     def get_base_hashmoji(self, bitmap_str: str) -> list[str]:
         # maybe we should accept
